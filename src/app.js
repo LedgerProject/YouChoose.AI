@@ -29,7 +29,6 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import moment from 'moment';
-
 import {updateUX} from './replacement';
 import config from './config';
 import hub from './hub';
@@ -58,7 +57,6 @@ function boot () {
         }
     } else if (_.endsWith(window.location.origin, 'youtube.com')) {
         // this get executed only on youtube.com
-        console.log(`YCAI version ${config.VERSION}, ${JSON.stringify(config)}`);
 
         // Register all the event handlers.
         // An event handler is a piece of code responsible for a specific task.
@@ -69,11 +67,11 @@ function boot () {
         localLookup(response => {
             // `response` contains the user's public key, we save it global to access them as config
             config.publicKey = response.publicKey;
-            config.ux= response.active;
-            config.community= response.svg;
-            config.alphabeth= response.videorep;
+            config.ux = response.active;
+            config.community = response.svg;
+            config.alphabeth = response.videorep;
             console.log(`YouChoose operative: ${JSON.stringify(config)}`);
-            // this makes 
+            // this makes
             // hrefUpdateMonitor();
             // flush();
         });
@@ -82,7 +80,7 @@ function boot () {
         return null;
     }
 
-    // this is the YouChoose specific main loop 
+    // this is the YouChoose specific main loop
     window.setInterval(function() {
         if(matchUXhackURL(window.location)) {
             const needrefresh = initializeHackedYTUX();
@@ -120,8 +118,7 @@ function initializeHackedYTUX() {
 
     /* actual code for monitoring */
     const needResize = checkRecommendationStatus();
-    if(needResize)
-        console.log("we might wants to redraw?", lastObservedSize);
+    if(needResize) {console.log("we might wants to redraw?", lastObservedSize);}
 
     let diff = (window.location.href !== lastVideoURL);
     return diff;
@@ -131,20 +128,19 @@ let lastObservedSize = null;
 function checkRecommendationStatus() {
     const rw = $(".ytd-watch-next-secondary-results-renderer").clientWidth;
     console.log("please note this size is", rw, "previous", lastObservedSize);
-    if(lastObservedSize === rw)
-        return false;
+    if(lastObservedSize === rw) {return false;}
 
-    // also check if fullscreen 
+    // also check if fullscreen
     lastObservedSize = rw;
     return true;
 }
 
-// completed 
+// completed
 
-function phase (path) {
-    const f = _.get(phases, path);
-    f(path);
-}
+// function phase (path) {
+//     const f = _.get(phases, path);
+//     f(path);
+// }
 
 /* move watchers somewhere else in a more clean way */
 const hrefPERIODICmsCHECK = 9000;
@@ -164,7 +160,7 @@ function hrefUpdateMonitor () {
         // clones and drop them server side.
         // also, here is cleaned the cache declared below
         if (diff) {
-            phase('video.seen');
+            // phase('video.seen');
             cleanCache();
             refreshUUID();
         }
@@ -188,7 +184,9 @@ function hrefUpdateMonitor () {
                     $(YT_VIDEOTITLE_SELECTOR).length,
                     $(YT_VIDEOTITLE_SELECTOR).text()
                 ); */
-                if (sizeCheck($('ytd-app').html(), 'ytd-app')) { phase('video.send'); }
+                if (sizeCheck($('ytd-app').html(), 'ytd-app')) {
+                    // phase('video.send');
+                }
             });
     }, hrefPeriodicCheck);
 }
@@ -203,10 +201,8 @@ function sizeCheck(nodeHTML, selector) {
     // this URL, this duplication is ignored.
 
     const s = _.size(nodeHTML);
-    if(!s)
-        return false;
-    if(sizecache.indexOf(s) != -1)
-        return false;
+    if(!s) {return false;}
+    if(sizecache.indexOf(s) !== -1) {return false;}
 
     sizecache.push(s);
     hub.event('newVideo', {
@@ -269,7 +265,7 @@ function localLookup (callback) {
 
 // The function `remoteLookup` communicate the intention
 // to the server of performing a certain test, and retrive
-// the userPseudonym from the server, it is used here also to 
+// the userPseudonym from the server, it is used here also to
 // retrieve recommendations for a certain videoID
 function remoteLookup (callback) {
     bo.runtime.sendMessage({

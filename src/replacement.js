@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 // import config from "./config";
 
 function recommandation_dispatcher(recc, i) {
@@ -6,9 +8,9 @@ function recommandation_dispatcher(recc, i) {
 
   // console.log(recc, i);
 
-  if(recc.type == 'youtube') {
+  if(recc.type === 'youtube') {
     return make_video_box(recc, i);
-  } else if(recc.type == 'article') {
+  } else if(recc.type === 'article') {
     return make_article_box(recc, i);
   } else {
     // all the type should be embedded
@@ -30,11 +32,18 @@ function max_url_box(ogblob, i) {
     thumb_div.append(video_thumb);
   }
 
-  url_box.innerHTML=  `
-    <a href="${ogblob.url}">${ogblob.title}</a>
-    <br>
-    <small>${ogblob.description}</small>
-  `;
+  if(ogblob.description) {
+url_box.innerHTML= `
+      <a href="${ogblob.url}">${ogblob.title}</a>
+      <br>
+      <small>${ogblob.description}</small>
+    `;
+} else {
+url_box.innerHTML= `
+      <a href="${ogblob.url}">${ogblob.title}</a>
+    `;
+}
+
   url_box.append(thumb_div);
   return url_box
 }
@@ -51,7 +60,7 @@ function make_article_box(article, i) {
   video_thumb.src = article.image;
   thumb_div.append(video_thumb);
 
-  article_box.innerHTML=  `
+  article_box.innerHTML= `
     <a href="${article.url}">${article.title}</a>
     <br>
     <small>${article.description}</small>
@@ -122,7 +131,7 @@ export function updateUX(response) {
 
   if(!recache.alphabeth) {
     const seen = document.getElementsByTagName('ytd-watch-next-secondary-results-renderer');
-    if(seen.length == 0) {
+    if(seen.length === 0) {
       return { status: 'waitForPage' }
     } else if(seen.length > 1) {
       console.log("This is weird!");
@@ -143,6 +152,7 @@ export function updateUX(response) {
   // Create new container
   const ycai_container = document.createElement('div');
   ycai_container.id = 'ycai_container';
+  ycai_container.style = { display: 'block' };
 
   // Add inline-block div
   const inline_div = document.createElement('div');
@@ -185,13 +195,38 @@ export function updateUX(response) {
   /* third party coming soon confuguration infos */
   const ycai_third_p = document.createElement('div');
   ycai_third_p.innerHTML= `
-    <p>something something something else,</p>
-    <p>Thiz iz a new line, with a <a
-      href="https://yahoo.it"
-      target=_blank
-      >
-        test link
-      </a>, and something else, overall.
+    <h4 class="thirdpd">
+      Community recommendation protocol.
+    </h4>
+    <p class="thirdpd">
+      Currently, a standard protocol does not exist to manage community recommendations. Therefore, we are in an open discussion with the first organization that could potentially interoperate with us: Turnesol, a Switzerland-based academic and free software project that wants to allow community recommendation on youtube videos.
+    </p>
+    <p class="thirdpd">
+      Their protocol is described in this <a href="https://github.com/tournesol-app/tournesol/blob/master/backend/schema.json">schema</a>. Our mechanism it is more generalized, as it do not wants to include only youtube videos; Both of us would benefit from a means to share such a recommendations list.
+    </p>
+    <p class="thirdpd">
+      We are discussing a protocol specification, so far our reasoning reflect this experimental API we implemented to fetch recommendations by Youtube VideoId (<a href="https://youtube.tracking.exposed/api/v3/TODO">example</a>, on <a href="https://www.youtube.com/watch?v=SmYuYEhT81c">this video</a>) and has these features:
+    </p>
+    <h4 class="thirdpd">
+      Protocol format — each object represent a recommendation:
+    </h4>
+    <p>
+      <code><ol class="shift-left">
+        <li>type: {youtube|wikipedia|article*|url}</li>
+        <li>url: String</li>
+        <li>description: (optional, String) usually retrieve by openGraph but up to 140 chars</li>
+        <li>title: usually retireved by openGraph but up to 40 chars</li>
+        <li>association: a pointer to the resource where the recommendation is meant for</li>
+        <li>thumbnail: (optional) an url of a picture remotely loaded as preview</li>
+        <li>date: ISO format date when the recommendation have been registered</li>
+        <li>signature: a cryptographical signature computed with Date+Association+Url</li>
+      </ol></code>
+      Also additional information might be transferred, they are two kinds:
+      <code><ol>
+        <li>extension: (optional) a JSON object that enhance, depends on 'type'. For example, type='youtube' might be set to express video lenghts, as {duration:"15:02"}</li>
+        <li>reason: (optional) a JSON object containing rankings, evaluations, or the reason why the recommendation is there</li>
+      </ol></code>
+      The client might render recommendations different, for example, based on type.
     </p>
   `;
   ycai_third_p.id ="ycai_third_party";
@@ -203,7 +238,8 @@ export function updateUX(response) {
     const bar = document.createElement('div');
     bar.id = 'ycaibar';
     bar.innerHTML = `
-      <p>Recommendations logic:</p>
+      <div>Recommendations logic</div>
+      <div class="button-list">
       <button
         id="default-selector-button"
         class="ycai--button"
@@ -211,7 +247,6 @@ export function updateUX(response) {
           (document.getElementsByTagName('ytd-watch-next-secondary-results-renderer')[0].style).display = 'block';
           (document.getElementById('ycai_third_party').style).display = 'none';
           (document.getElementById('ycai_container').style).display = 'none';
-          (document.getElementById('default-selector-button').style)['text-decoration'] = 'underline';
         ">
         Propertary algo
         Default
@@ -223,7 +258,6 @@ export function updateUX(response) {
           (document.getElementsByTagName('ytd-watch-next-secondary-results-renderer')[0].style).display = 'none';
           (document.getElementById('ycai_third_party').style).display = 'none';
           (document.getElementById('ycai_container').style).display = 'block';
-          (document.getElementById('ycai-selector-button').style)['text-decoration'] = 'underline';
         ">
         Youchoose
       </button>
@@ -234,10 +268,10 @@ export function updateUX(response) {
           (document.getElementsByTagName('ytd-watch-next-secondary-results-renderer')[0].style).display = 'none';
           (document.getElementById('ycai_container').style).display = 'none';
           (document.getElementById('ycai_third_party').style).display = 'block';
-          (document.getElementById('thirdparty-selector-button').style)['text-decoration'] = 'underline';
         ">
         Community
       </button>
+      </div>
     `;
     /* append to the dom on top of the current viz */
     recache.alphabeth.parentNode.before(bar);

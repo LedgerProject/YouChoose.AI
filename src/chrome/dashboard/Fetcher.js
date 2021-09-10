@@ -1,56 +1,31 @@
 import React from 'react';
-import InputLabel from '@material-ui/core/InputLabel';
-import TextField from '@material-ui/core/TextField';
-
-import UrlCard from './UrlCard';
+import {TextField, Chip, Box, Button } from '@material-ui/core';
+import { addRecommendation } from './API/commands';
 
 const styles = {
-    width: '100%',
-    textAlign: 'center',
+  width: '100%',
+  textAlign: 'left',
+  display: 'flex',
+  alignItems: 'center'
 };
 
-class Fetcher extends React.Component{
+const Fetcher = () => {
 
-  constructor(props) {
-    super(props);
-    this.state = {url: 'https://'};
-    this.handleChange = this.handleChange.bind(this);
-    this.completed = this.completed.bind(this);
-  } 
+  const completed = React.useCallback((e) => {
+    const url = document.querySelector('[placeholder="Placeholder"]').value;
+    addRecommendation(url, { paging: true })();
+  }, [])
 
-  handleChange(e) {
-    this.setState({ url: e.target.value });
-  }
-
-  completed(e) {
-    // this handle the pressing of "Enter" key
-    if(e.keyCode == 13) {
-      let current = this.state.urlnumber ? this.state.urlnumber : 0;
-      this.setState({ newurl: true, urlnumber: current + 1 });
-    }
-  }
-
-  render () {
-    return (
-      <div style={styles}>
-        <InputLabel>paste or write any URL then press <kbd>Enter</kbd>; It will fetch the preview and send it to the server.</InputLabel>
-        <TextField
-          fullWidth={true}
-          value={this.state.url}
-          onChange={this.handleChange}
-          onKeyDown={this.completed}
-        />
-        { this.state.newurl ?
-          `fetching ${this.state.urlnumber}...` : ""
-        }
-        <UrlCard
-          key={this.state.urlnumber}
-          fetch={true}
-          url={this.state.url } />
-      </div>
-    );
-  }
+  return (
+    <Box style={styles}>
+      <TextField
+        label="Recommendation URL"
+        placeholder="Placeholder"
+        multiline
+      />
+      <Button variant="contained" color="primary" onClick={completed}>Add</Button>
+    </Box>
+  );
 }
 
-          // { this.state.newurl1 ?  <UrlCard data={this.state.lastFetch} /> : "" }
 export default Fetcher;

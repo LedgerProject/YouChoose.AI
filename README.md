@@ -1,4 +1,3 @@
-
 # YouChoose.AI
 
 There are three components that compose this project.
@@ -104,6 +103,7 @@ $ ls -l dist/extension.zip
 We guarantee this process on Linux Debian based distribution.  
 
 ##### Requirements
+
 1. Mongodb running locally, the config file `yttrex-backend/backend/config/settings.json` specify a few settings such as DB name, port, and collection names. Minimum version of MongoDB is 3.x
 2. Follow this initialization (submodule, dependency) from the YouChoose directory
 
@@ -114,3 +114,21 @@ cd yttrex-backend/backend
 npm install
 npm run watch
 ```
+
+# API used by YouChoose
+
+This would be documented in details in a dedicate space. By the 8 September 2021 alpha stage, [here implemented](https://github.com/tracking-exposed/yttrex/blob/master/backend/routes/youchoose.js).
+
+
+### Public 
+
+POST /api/v3/handshake
+GET /api/v3/video/:videoId/recommendations
+GET /api/v3/recommendations/:ids
+
+### Content Creator 
+
+POST /api/v3/creator/updateVideo
+GET /api/v3/creator/ogp/:url
+GET /api/v3/creator/videos/:publicKey
+GET /api/v3/creator/recommendations/:publicKey

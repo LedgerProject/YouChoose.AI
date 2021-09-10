@@ -1,88 +1,115 @@
-import React from 'react';
-import _ from 'lodash';
 import { Card } from '@material-ui/core';
-import { Alert, AlertTitle } from '@material-ui/lab';
-import FormHelperText from '@material-ui/core/FormHelperText';
-
-import config from '../../config';
+import { ContactsOutlined } from '@material-ui/icons';
+import * as QR from 'avenger/lib/QueryResult';
+import { declareQueries, WithQueries } from 'avenger/lib/react';
+import { pipe } from 'fp-ts/lib/function';
+import React from 'react';
+import { updateRecommendationForVideo } from './API/commands';
+import { currentVideoOnEdit, recommendations } from './API/queries';
+import { ErrorBox } from './components/common/ErrorBox';
+import { LazyFullSizeLoader } from './components/common/FullSizeLoader';
 import UrlCard from './UrlCard';
-import { getVideoId } from '../../youtube';
 
 const styles = {
-  width: '400px',
   textAlign: 'left',
 };
 
-function getRecommendations(paging) {
-  if (paging)
-    console.log("remember the paging is disabled");
-  // const videoId = getVideoId(window.location.href)
-  const publicKey = "not-implemented-yet";
-  return `${config.API_ROOT}/profile/recommendations/${publicKey}`;
-}
+const RecommendationCards = declareQueries({
+  recommendations,
+  currentVideoOnEdit,
+})(({ queries }) => {
+  console.log(queries);
+  return (
+    <div>
+      <div style={styles}>
+        <h4>Your recommendations</h4>
+      </div>
+      {pipe(
+        queries,
+        QR.fold(
+          LazyFullSizeLoader,
+          ErrorBox,
+          ({ recommendations, currentVideoOnEdit: video }) => {
+            if (recommendations.length === 0) {
+              return (
+                <div style={styles}>
+                  <Card>
+                    <h3>
+                      Altought connection with server worked, no content was
+                      available!?
+                    </h3>
+                  </Card>
+                </div>
+              );
+            }
+            return (
+              <div className="card-group">
+                {recommendations.map((item, i) => {
+                  const videoReccomendations = video ? video.recommendations : [];
+                  const alreadyPresent = videoReccomendations.includes(item.urlId);
 
-class Recommendations extends React.Component{
+                  console.log({ videoReccomendations, alreadyPresent});
+                  return(
+                  <UrlCard
+                    key={i}
+                    data={item}
+                    alreadyPresent={alreadyPresent}
+                    onDeleteClick={video ? () => {
+                      const newVideoRecommendations = videoReccomendations
+                          .filter((v) => v !== item.urlId);
 
-  constructor (props) {
-    super(props);
-    this.state = { status: 'fetching' };
-  }
+                        updateRecommendationForVideo(
+                          {
+                            videoId: video.videoId,
+                            creatorId: video.creatorId,
+                            recommendations: newVideoRecommendations,
+                          },
+                          {
+                            currentVideoOnEdit: undefined,
+                            recommendations: {}
+                          }
+                        )();
+                    }: undefined}
+                    onAddClick={video ? () => {
 
-  componentDidMount () {
-    const url = getRecommendations();
-    fetch(url, { mode: 'cors' })
-      .then(resp => resp.json())
-      .then(data => this.setState({status: 'done', data }));
-  }
+                        const newVideoRecommendations = video.recommendations
+                          .filter((v) => v !== item.urlId)
+                          .concat(item.urlId);
 
-  render () {
+                        updateRecommendationForVideo(
+                          {
+                            videoId: video.videoId,
+                            creatorId: video.creatorId,
+                            recommendations: newVideoRecommendations,
+                          },
+                          {
+                            currentVideoOnEdit: undefined,
+                            recommendations: {}
+                          }
+                        )();
 
-    if(!this.state || this.state.status == 'fetching')
-      return (<div>Loading the most recently performed searches...</div>)
+                    } : undefined}
+                  />
+                )
+              })}
+              </div>
+            );
+          }
+        )
+      )}
+    </div>
+  );
+});
 
-    console.log('checking state:', this.state);
-
-    if(this.state.status !== 'done') {
-      console.log("Incomplete info before render");
-      return (
-        <div style={styles}>
-          <Card>
-            <Alert severity="error">
-              <AlertTitle>Error</AlertTitle>
-              Server didn't return data, this might means the backend is down — <strong>Make sense also because this is just an experiment in prototype phase.</strong>
-            </Alert>
-          </Card>
-        </div>
-      );
-    }
-
-    const selist = this.state.data;
-
-    if(!(this.state.data && selist && selist.length )) {
-      return (
-        <div style={styles}>
-          <Card>
-            <h1>Altought connection with server worked, no content was available: <a href="https://www.youtube.com/watch?v=bs2u4NLaxbI">ODD?</a>.</h1>
-          </Card>
-        </div>
-      );
-    }
-    
-    return (
-      <span>
-        <div style={styles}>
-          <Card>
-            <FormHelperText>
-              This please is helpful to test ways to visualize recommendation in React, and then later import this into YoutubeUX.
-            </FormHelperText>
-          </Card>
-        </div>
-        <div className="card-group">
-          {selist.map((item,i) => <UrlCard key={i} data={item} />)}
-        </div>
-      </span>
-    );
-  }
-}
+const Recommendations = () => {
+  return (
+    <RecommendationCards
+      queries={{
+        recommendations: {},
+        video: {},
+      }}
+    />
+  );
+};
 
 export default Recommendations;
