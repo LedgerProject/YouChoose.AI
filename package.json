@@ -1,16 +1,12 @@
 {
   "name": "youchoose.ai",
-  "version": "1.1.1-beta.2",
+  "version": "1.1.2",
   "description": "YouChoose AI",
   "homepage": "https://youchoose.ai",
-  "bugs": "https://github.com/tracking-exposed/YCAI/issues",
+  "bugs": "https://github.com/tracking-exposed/yttrex/issues",
   "private": true,
   "license": "AGPL-3.0",
   "author": "Read the CREDITS file in the repository linked in https://youchoose.ai",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tracking-exposed/YCAI.git"
-  },
   "scripts": {
     "prepare": "husky install",
     "clean": "rm -rf ./build",
