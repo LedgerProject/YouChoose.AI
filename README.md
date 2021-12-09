@@ -8,6 +8,8 @@ There are three components that compose this project.
 2. The backend of https://youtube.tracking.exposed, free software developed in 2018 under the ERC project ALEX (https://algorithms.exposed). This package since 2019 is maintained as an independent mechanism for Youtube algorithm accountability and enhanced to be the backend supporting YouChoose.
 3. The website https://youchoose.ai, is available at [this repository](https://github.com/tracking-exposed/youchoose.ai/).
 
+The package should build the repository at this stage of history with the instruction below. The last version, maintained as part of the yttrex repository, can be built by [following the instructions documented here](https://github.com/tracking-exposed/yttrex).
+
 The backend in point 2 belongs to an existing repository that we link via git submodule.
 
 ### Browser extension building
