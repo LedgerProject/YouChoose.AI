@@ -6,7 +6,7 @@ There are three components that compose this project.
 
 1. The browser extension. the core product of YouChoose.AI, sponsored by Ledger project round 3
 2. The backend of https://youtube.tracking.exposed, free software developed in 2018 under the ERC project ALEX (https://algorithms.exposed). This package since 2019 is maintained as an independent mechanism for Youtube algorithm accountability and enhanced to be the backend supporting YouChoose.
-3. The website https://youchoose.ai, is available at the address [TODO Ledgercommit]
+3. The website https://youchoose.ai, is available at [this repository](https://github.com/tracking-exposed/youchoose.ai/).
 
 The backend in point 2 belongs to an existing repository that we link via git submodule.
 
@@ -119,18 +119,26 @@ npm run watch
 
 # API used by YouChoose
 
-This would be documented in details in a dedicate space. By the 8 September 2021 alpha stage, [here implemented](https://github.com/tracking-exposed/yttrex/blob/master/backend/routes/youchoose.js).
+This would be documented in https://youchoose.ai/docs.
 
+  * By the 8 September 2021 alpha stage, [here implemented](https://github.com/tracking-exposed/yttrex/blob/master/backend/routes/youchoose.js).
+  * By the 10 November 2021 beta stage, the API are accessible via _swagger_ as part of YouChoose
+  * By December 2021, we moved the swagger interface outside the browser extension, as part ot the [Creator Studio](https://studio.youchoose.ai/index.html?path=/settings/)
 
-### Public 
+### Public
 
-POST /api/v3/handshake
-GET /api/v3/video/:videoId/recommendations
-GET /api/v3/recommendations/:ids
+Brief description of the core API used by YouChoose (extension and studio)
+
+```
+GET /api/v3/video/:videoId/recommendations      This API returns the creator's recommendation based on the youtube videoId
+GET /api/v3/recommendations/:ids                Get recommendation details based on the recommendationId
+```
 
 ### Content Creator 
 
-POST /api/v3/creator/updateVideo
-GET /api/v3/creator/ogp/:url
-GET /api/v3/creator/videos/:publicKey
-GET /api/v3/creator/recommendations/:publicKey
+```
+POST /api/v3/creator/updateVideo                Creator updates the settings on a specific videoId 
+GET /api/v3/creator/ogp/:url                    Submit a recommendation and get resoved the OpenGraphProtocol (https://ogp.me)
+GET /api/v3/creator/videos/:publicKey           A Creator get a list of their videos 
+GET /api/v3/creator/recommendations/:publicKey  A Creator get a list of their recommendations
+```
