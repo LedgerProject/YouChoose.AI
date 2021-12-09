@@ -1,4 +1,4 @@
-**Note:** The extension and backend in this repository are functional, but the tool has not yet been officially launched. We are currently in beta-testing phase, and are planning the public release for January 2021. Consult our [website](http://youchoose.ai) or [follow us on Twitter](https://twitter.com/YouChooseAI) to stay updated.
+**Note:** The extension and backend in this repository are functional, but the tool has not yet been officially launched. We are currently in beta-testing phase, and are planning the public release for January 2022. Consult our [website](http://youchoose.ai) or [follow us on Twitter](https://twitter.com/YouChooseAI) to stay updated.
 
 # YouChoose.AI
 
